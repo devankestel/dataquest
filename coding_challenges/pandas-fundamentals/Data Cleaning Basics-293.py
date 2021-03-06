@@ -57,11 +57,6 @@ laptops["ram"] = laptops["ram"].str.replace('GB','').astype(int)
 laptops.rename({'ram':'ram_gb'}, axis=1, inplace=True)
 ram_gb_desc = laptops['ram_gb'].describe()
 
-# note I am using the answer given to pass the challenge, but it is wrong. so I'm putting the actual answer in the comments
-# laptops.rename({'ram':'ram_gb'}, axis=1, inplace=True)
-# ram_gb_desc = laptops['ram_gb'].describe()
-# laptops["ram"] = laptops["ram_gb"].str.replace('GB','').astype(int)
-
 
 
 ## 8. Extracting Values from Strings ##
@@ -89,3 +84,24 @@ mapping_dict = {
 }
 
 laptops['os'] = laptops['os'].map(mapping_dict)
+
+## 10. Dropping Missing Values ##
+
+laptops_no_null_rows = laptops.dropna()
+laptops_no_null_cols = laptops.dropna(axis=1)
+
+## 11. Filling Missing Values ##
+
+value_counts_before = laptops.loc[laptops["os_version"].isnull(), "os"].value_counts()
+laptops.loc[laptops["os"] == "macOS", "os_version"] = "X"
+laptops.loc[laptops["os"] == "No OS", "os_version"] = "Version Unknown"
+value_counts_after = laptops.loc[laptops["os_version"].isnull(), "os"].value_counts()
+
+## 12. Challenge: Clean a String Column ##
+
+laptops['weight'] = (laptops['weight']
+                     .str.replace('kgs','')
+                     .str.replace('kg', '')
+                     .astype(float))
+laptops.rename({'weight':'weight_kg'}, axis=1, inplace=True)
+laptops.to_csv('laptops_cleaned.csv', index=False)
